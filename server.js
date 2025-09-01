@@ -7,7 +7,7 @@ const middlewares = jsonServer.defaults();
 
 // Allow frontend (React on Vercel) to call API
 server.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "*"); 
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   if (req.method === "OPTIONS") return res.sendStatus(200);
@@ -19,19 +19,6 @@ server.use(jsonServer.bodyParser);
 
 // Health check for Render
 server.get("/healthz", (_req, res) => res.json({ ok: true }));
-
-// Show available endpoints at /api
-server.get("/api", (req, res) => {
-  try {
-    const db = router.db; // lowdb instance
-    const data = db?.data || {};
-    const endpoints = Object.keys(data).map((key) => `/api/${key}`);
-    res.json({ endpoints });
-  } catch (err) {
-    console.error("Error fetching /api endpoints:", err);
-    res.status(500).json({ error: "Failed to load endpoints" });
-  }
-});
 
 // All API routes under /api
 server.use("/api", router);
