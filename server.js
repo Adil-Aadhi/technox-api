@@ -20,6 +20,14 @@ server.use(jsonServer.bodyParser);
 // Health check for Render
 server.get("/healthz", (_req, res) => res.json({ ok: true }));
 
+// 👇 Custom index route for /api
+server.get("/api", (req, res) => {
+  const db = router.db; // lowdb instance
+  res.json({
+    endpoints: Object.keys(db.data) // show collections from db.json
+  });
+});
+
 // All API routes under /api
 server.use("/api", router);
 
