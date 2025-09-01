@@ -22,10 +22,15 @@ server.get("/healthz", (_req, res) => res.json({ ok: true }));
 
 // Show available endpoints at /api
 server.get("/api", (req, res) => {
-  const db = router.db; // lowdb instance
-  res.json({
-    endpoints: Object.keys(db.data).map((key) => `/api/${key}`)
-  });
+  try {
+    const db = router.db; // lowdb instance
+    const data = db?.data || {};
+    const endpoints = Object.keys(data).map((key) => `/api/${key}`);
+    res.json({ endpoints });
+  } catch (err) {
+    console.error("Error fetching /api endpoints:", err);
+    res.status(500).json({ error: "Failed to load endpoints" });
+  }
 });
 
 // All API routes under /api
