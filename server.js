@@ -20,24 +20,16 @@ server.use(jsonServer.bodyParser);
 // Health check for Render
 server.get("/healthz", (_req, res) => res.json({ ok: true }));
 
-// Mount all API routes under /api
-server.use("/api", router);
-
-// 👇 Must come AFTER router
+// Show available endpoints at /api
 server.get("/api", (req, res) => {
   const db = router.db; // lowdb instance
   res.json({
-    endpoints: Object.keys(db.data) // show top-level keys from db.json
+    endpoints: Object.keys(db.data).map((key) => `/api/${key}`)
   });
 });
 
-// Optional: also show endpoints at root /
-server.get("/", (req, res) => {
-  const db = router.db;
-  res.json({
-    endpoints: Object.keys(db.data).map((c) => `/api/${c}`)
-  });
-});
+// All API routes under /api
+server.use("/api", router);
 
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
